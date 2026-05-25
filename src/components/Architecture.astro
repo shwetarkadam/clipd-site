@@ -11,9 +11,41 @@
       <h2 class="font-mono text-[clamp(26px,3.8vw,40px)] font-bold tracking-[-1.5px] text-[#cdd6f4] mb-3">
         Daemon + thin clients.
       </h2>
-      <p class="text-sm text-[#a6adc8] max-w-[500px] mx-auto">
-        One Rust binary runs in the background. Everything else talks to it.
+      <p class="text-sm text-[#a6adc8] max-w-[560px] mx-auto leading-[1.7]">
+        How clipd runs on your machine today — aligned with the
+        <a href="https://github.com/shwetarkadam/clipd" class="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">clipd repo</a>
+        and v0.1.0 release.
       </p>
+    </div>
+
+    <!-- User flow — matches README "How It Works" -->
+    <div class="max-w-[720px] mx-auto mb-14 fade-in border border-[#313244] rounded-[10px] bg-[#1e1e2e] overflow-hidden">
+      <div class="flex items-center gap-2 px-4 py-2.5 border-b border-[#313244] bg-[#181825] font-mono text-[11px] text-[#6c7086]">
+        <span class="text-[#a6e3a1]">●</span> how_it_works.rs — first launch
+      </div>
+      <ol class="p-6 sm:p-8 space-y-4 list-none counter-reset-none font-mono text-[13px] text-[#a6adc8] leading-[1.7]">
+        <li class="flex gap-4">
+          <span class="text-[#fab387] shrink-0">01</span>
+          <span>
+            Open <strong class="text-[#cdd6f4] font-normal">Clipd</strong> (or run <code class="text-[#89b4fa]">clipd-ui</code>).
+            A <strong class="text-[#cdd6f4] font-normal">tray icon</strong> appears — menu bar on macOS, system tray on Windows/Linux.
+          </span>
+        </li>
+        <li class="flex gap-4">
+          <span class="text-[#fab387] shrink-0">02</span>
+          <span>
+            The <strong class="text-[#cdd6f4] font-normal">daemon</strong> starts in the background, watches the clipboard, and keeps up to
+            <strong class="text-[#cdd6f4] font-normal">30 slots</strong> plus searchable history ready.
+          </span>
+        </li>
+        <li class="flex gap-4">
+          <span class="text-[#fab387] shrink-0">03</span>
+          <span>
+            Use hotkeys, <code class="text-[#89b4fa]">clipd search</code> (TUI), or the GUI window — no config files.
+            On macOS, grant <strong class="text-[#cdd6f4] font-normal">Accessibility</strong> + <strong class="text-[#cdd6f4] font-normal">Input Monitoring</strong>, then restart once.
+          </span>
+        </li>
+      </ol>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 fade-in">
@@ -25,36 +57,79 @@
         <div class="p-7 font-mono text-[12px] leading-[1.5] text-[#a6adc8]">
 <pre class="whitespace-pre">
 <span class="text-[#313244]">┌────────────────────────────────────┐</span>
-<span class="text-[#313244]">│</span>  <span class="text-[#fab387]">OS Clipboard Events</span>               <span class="text-[#313244]">│</span>
-<span class="text-[#313244]">│</span>  <span class="text-[#313244]">pasteboard · x11 · wl-clipboard</span>  <span class="text-[#313244]">│</span>
+<span class="text-[#313244]">│</span>  <span class="text-[#fab387]">OS pasteboard + hotkeys</span>           <span class="text-[#313244]">│</span>
+<span class="text-[#313244]">│</span>  <span class="text-[#585b70]">mac · win · linux</span>                 <span class="text-[#313244]">│</span>
 <span class="text-[#313244]">└──────────────┬─────────────────────┘</span>
                <span class="text-[#313244]">│</span>
                <span class="text-[#313244]">▼</span>
 <span class="text-[#313244]">┌────────────────────────────────────┐</span>
-<span class="text-[#313244]">│</span>  <span class="text-[#cdd6f4]">clipd daemon</span>                      <span class="text-[#313244]">│</span>
-<span class="text-[#313244]">│</span>                                    <span class="text-[#313244]">│</span>
-<span class="text-[#313244]">│</span>  <span class="text-[#fab387]">watcher</span>  <span class="text-[#cba6f7]">store</span>  <span class="text-[#89b4fa]">ai</span>    <span class="text-[#94e2d5]">sync</span>       <span class="text-[#313244]">│</span>
-<span class="text-[#313244]">│</span>  <span class="text-[#fab387]">hotkeys</span>  <span class="text-[#cba6f7]">query</span>  <span class="text-[#89b4fa]">onnx</span>  <span class="text-[#a6e3a1]">mcp</span>        <span class="text-[#313244]">│</span>
-<span class="text-[#313244]">│</span>                                    <span class="text-[#313244]">│</span>
-<span class="text-[#313244]">└──┬────┬────┬────┬────┬────────────┘</span>
+<span class="text-[#313244]">│</span>  <span class="text-[#cdd6f4]">clipd-daemon</span>                      <span class="text-[#313244]">│</span>
+<span class="text-[#313244]">│</span>  <span class="text-[#fab387]">watcher</span>  <span class="text-[#cba6f7]">store</span>  <span class="text-[#89b4fa]">query</span>             <span class="text-[#313244]">│</span>
+<span class="text-[#313244]">│</span>  <span class="text-[#94e2d5]">hotkeys</span>  <span class="text-[#f9e2af]">slots</span>  <span class="text-[#a6e3a1]">history</span>         <span class="text-[#313244]">│</span>
+<span class="text-[#313244]">└──┬────┬────┬────┬────┬─────────────┘</span>
    <span class="text-[#313244]">│</span>    <span class="text-[#313244]">│</span>    <span class="text-[#313244]">│</span>    <span class="text-[#313244]">│</span>    <span class="text-[#313244]">│</span>
    <span class="text-[#313244]">▼</span>    <span class="text-[#313244]">▼</span>    <span class="text-[#313244]">▼</span>    <span class="text-[#313244]">▼</span>    <span class="text-[#313244]">▼</span>
-  <span class="text-[#fab387]">TUI</span>  <span class="text-[#cba6f7]">CLI</span>  <span class="text-[#89b4fa]">ST</span>  <span class="text-[#a6e3a1]">VSC</span>  <span class="text-[#94e2d5]">nvim</span>
+  <span class="text-[#fab387]">TUI</span>  <span class="text-[#cba6f7]">CLI</span>  <span class="text-[#89b4fa]">GUI</span>  <span class="text-[#94e2d5]">TRAY</span> <span class="text-[#f5c2e7]">HUD*</span>
 </pre>
+          <p class="mt-4 text-[10px] text-[#585b70] leading-[1.5]">
+            * HUD: native Swift overlay on macOS; desktop notification on Windows/Linux.
+            Crates: clipd-tui · clipd-cli · clipd-gui · clipd-ui · clipd-hud.
+          </p>
         </div>
       </div>
 
       <!-- Tech Stack -->
       <div class="flex flex-col gap-2">
-        <div class="stack-item"><span class="stack-label text-[#fab387]">CORE</span><span class="stack-value">Rust · arboard · rusqlite</span></div>
-        <div class="stack-item"><span class="stack-label text-[#cba6f7]">STORE</span><span class="stack-value">SQLite · FTS5 · WAL mode</span></div>
-        <div class="stack-item"><span class="stack-label text-[#89b4fa]">AI</span><span class="stack-value">ONNX Runtime · GLiNER2 · MiniLM</span></div>
-        <div class="stack-item"><span class="stack-label text-[#94e2d5]">TUI</span><span class="stack-value">ratatui · crossterm</span></div>
-        <div class="stack-item"><span class="stack-label text-[#a6e3a1]">IPC</span><span class="stack-value">Unix socket · MCP server</span></div>
-        <div class="stack-item"><span class="stack-label text-[#f9e2af]">SYNC</span><span class="stack-value">AES-256-GCM · self-hostable</span></div>
-        <div class="stack-item"><span class="stack-label text-[#f38ba8]">HOTKEYS</span><span class="stack-value">global-hotkey · Accessibility API</span></div>
-        <div class="stack-item"><span class="stack-label text-[#f5c2e7]">PLUGINS</span><span class="stack-value">Python · TypeScript · Lua shims</span></div>
+        <div class="stack-item"><span class="stack-label text-[#fab387]">CORE</span><span class="stack-value">Rust · clipd-core · arboard</span></div>
+        <div class="stack-item"><span class="stack-label text-[#cba6f7]">STORE</span><span class="stack-value">SQLite · rusqlite · FTS5 · WAL</span></div>
+        <div class="stack-item"><span class="stack-label text-[#94e2d5]">TUI</span><span class="stack-value">ratatui · crossterm · clipd search</span></div>
+        <div class="stack-item"><span class="stack-label text-[#89b4fa]">GUI</span><span class="stack-value">eframe · clipd-gui (all platforms)</span></div>
+        <div class="stack-item"><span class="stack-label text-[#a6e3a1]">TRAY</span><span class="stack-value">clipd-ui · menu bar / system tray</span></div>
+        <div class="stack-item"><span class="stack-label text-[#f38ba8]">HOTKEYS</span><span class="stack-value">mac: rdev multi-tap · win/linux: global-hotkey</span></div>
+        <div class="stack-item"><span class="stack-label text-[#f9e2af]">PASTE</span><span class="stack-value">mac: AppleScript · win/linux: enigo</span></div>
+        <div class="stack-item"><span class="stack-label text-[#f5c2e7]">HUD</span><span class="stack-value">Swift overlay (macOS) · notify (win/linux)</span></div>
+        <div class="stack-item stack-item-muted"><span class="stack-label text-[#585b70]">NEXT</span><span class="stack-value text-[#6c7086]">ONNX · editor MCP · E2E sync</span></div>
       </div>
+    </div>
+
+    <!-- Platform matrix — from repo README -->
+    <div class="mt-14 overflow-x-auto border border-[#313244] rounded-[10px] bg-[#1e1e2e] fade-in">
+      <table class="w-full border-collapse font-mono text-[12px]">
+        <thead>
+          <tr>
+            <th class="p-3 text-left text-[10px] uppercase tracking-wider text-[#6c7086] font-medium bg-[#181825] border-b border-[#313244]"></th>
+            <th class="p-3 text-left text-[10px] uppercase tracking-wider text-[#fab387] font-medium bg-[rgba(250,179,135,0.08)] border-b border-[#313244]">macOS</th>
+            <th class="p-3 text-left text-[10px] uppercase tracking-wider text-[#6c7086] font-medium bg-[#181825] border-b border-[#313244]">Windows</th>
+            <th class="p-3 text-left text-[10px] uppercase tracking-wider text-[#6c7086] font-medium bg-[#181825] border-b border-[#313244]">Linux</th>
+          </tr>
+        </thead>
+        <tbody class="text-[#a6adc8]">
+          <tr class="hover:bg-[#181825]">
+            <td class="p-3 border-b border-[#313244]">Multi-slot + history</td>
+            <td class="p-3 border-b border-[#313244] bg-[rgba(250,179,135,0.05)]"><span class="text-[#a6e3a1]">●</span> Yes</td>
+            <td class="p-3 border-b border-[#313244]"><span class="text-[#a6e3a1]">●</span> Yes</td>
+            <td class="p-3 border-b border-[#313244]"><span class="text-[#a6e3a1]">●</span> Yes</td>
+          </tr>
+          <tr class="hover:bg-[#181825]">
+            <td class="p-3 border-b border-[#313244]">Slot hotkeys</td>
+            <td class="p-3 border-b border-[#313244] bg-[rgba(250,179,135,0.05)]">Cmd/Ctrl multi-tap (rdev)</td>
+            <td class="p-3 border-b border-[#313244]">Ctrl+Super+N</td>
+            <td class="p-3 border-b border-[#313244]">Ctrl+Super+N</td>
+          </tr>
+          <tr class="hover:bg-[#181825]">
+            <td class="p-3 border-b border-[#313244]">HUD feedback</td>
+            <td class="p-3 border-b border-[#313244] bg-[rgba(250,179,135,0.05)]">Native overlay</td>
+            <td class="p-3 border-b border-[#313244]">Desktop notification</td>
+            <td class="p-3 border-b border-[#313244]">Desktop notification</td>
+          </tr>
+          <tr class="hover:bg-[#181825]">
+            <td class="p-3">First-launch setup</td>
+            <td class="p-3 bg-[rgba(250,179,135,0.05)]">Accessibility + Input Monitoring</td>
+            <td class="p-3">None required</td>
+            <td class="p-3">None required</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -72,6 +147,10 @@
   }
   .stack-item:hover {
     border-color: #45475a;
+  }
+  .stack-item-muted {
+    opacity: 0.95;
+    border-style: dashed;
   }
   .stack-label {
     font-family: 'JetBrains Mono', monospace;

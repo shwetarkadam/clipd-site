@@ -8,71 +8,95 @@
         <span class="text-[#cba6f7]">const</span>
         <span class="text-[#a6e3a1]">KEYBINDS</span>
       </div>
-      <h2 class="font-mono text-[clamp(26px,3.8vw,40px)] font-bold tracking-[-1.5px] text-[#cdd6f4]">
+      <h2 class="font-mono text-[clamp(26px,3.8vw,40px)] font-bold tracking-[-1.5px] text-[#cdd6f4] mb-3">
         Your hands never leave the keyboard.
       </h2>
+      <p class="text-sm text-[#a6adc8] max-w-[520px] mx-auto">
+        Two styles from the shipped README — pick whichever feels natural. Actions fire ~0.35s after the last tap.
+      </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-[1px] bg-[#313244] border border-[#313244] rounded-[10px] overflow-hidden fade-in">
-      <!-- Copy Slots -->
+      <!-- Option A — Cmd multi-tap -->
       <div class="bg-[#1e1e2e] p-8">
-        <div class="font-mono text-[11px] text-[#cba6f7] uppercase tracking-[1.5px] mb-5 flex items-center gap-2">
-          <span class="text-[#a6e3a1]">></span> Copy Slots
+        <div class="font-mono text-[11px] text-[#cba6f7] uppercase tracking-[1.5px] mb-2 flex items-center gap-2">
+          <span class="text-[#a6e3a1]">></span> Option A — Cmd multi-tap
+        </div>
+        <p class="text-[11px] text-[#585b70] font-mono mb-5 leading-[1.5]">Repeat Cmd+C / Cmd+V to target slots 1, 2, 3… (up to 30).</p>
+        <div class="flex items-center justify-between py-3 border-b border-[#313244]">
+          <div class="flex gap-1 items-center flex-wrap">
+            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">C</span><span class="key-plus">×2</span>
+          </div>
+          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">→</span> copy slot 1</span>
         </div>
         <div class="flex items-center justify-between py-3 border-b border-[#313244]">
-          <div class="flex gap-1 items-center">
-            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">C</span>
+          <div class="flex gap-1 items-center flex-wrap">
+            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">C</span><span class="key-plus">×3</span>
           </div>
-          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">→</span> default slot</span>
+          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">→</span> copy slot 2</span>
         </div>
         <div class="flex items-center justify-between py-3 border-b border-[#313244]">
-          <div class="flex gap-1 items-center">
-            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">⇧</span><span class="key-plus">+</span><span class="key key-accent">1</span>
+          <div class="flex gap-1 items-center flex-wrap">
+            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">V</span><span class="key-plus">×2</span>
           </div>
-          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">→</span> slot 1</span>
+          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">←</span> paste slot 1</span>
         </div>
         <div class="flex items-center justify-between py-3 border-b border-[#313244]">
-          <div class="flex gap-1 items-center">
-            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">⇧</span><span class="key-plus">+</span><span class="key key-accent">2</span>
+          <div class="flex gap-1 items-center flex-wrap">
+            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">V</span><span class="key-plus">×3</span>
           </div>
-          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">→</span> slot 2</span>
+          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">←</span> paste slot 2</span>
         </div>
         <div class="flex items-center justify-between py-3">
-          <div class="flex gap-1 items-center">
-            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">⇧</span><span class="key-plus">+</span><span class="key key-accent">9</span>
+          <div class="flex gap-1 items-center flex-wrap">
+            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">⌥</span><span class="key-plus">+</span><span class="key">V</span>
           </div>
-          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">→</span> slot 9</span>
+          <span class="text-[13px] text-[#a6adc8]">sequence paste (slots in order)</span>
         </div>
       </div>
 
-      <!-- Paste & Search -->
+      <!-- Option B — Ctrl tap after Cmd+C -->
       <div class="bg-[#1e1e2e] p-8">
-        <div class="font-mono text-[11px] text-[#cba6f7] uppercase tracking-[1.5px] mb-5 flex items-center gap-2">
-          <span class="text-[#a6e3a1]">></span> Paste & Search
+        <div class="font-mono text-[11px] text-[#cba6f7] uppercase tracking-[1.5px] mb-2 flex items-center gap-2">
+          <span class="text-[#a6e3a1]">></span> Option B — Ctrl tap
+        </div>
+        <p class="text-[11px] text-[#585b70] font-mono mb-5 leading-[1.5]">Copy normally with Cmd+C, then tap Ctrl+C / Ctrl+V to target slots.</p>
+        <div class="flex items-center justify-between py-3 border-b border-[#313244]">
+          <div class="flex gap-1 items-center flex-wrap">
+            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">C</span>
+            <span class="text-[#585b70] text-[11px] mx-1">then</span>
+            <span class="key">Ctrl</span><span class="key-plus">+</span><span class="key">C</span>
+          </div>
+          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">→</span> copy slot 1</span>
+        </div>
+        <div class="flex items-center justify-between py-3 border-b border-[#313244]">
+          <div class="flex gap-1 items-center flex-wrap">
+            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">C</span>
+            <span class="text-[#585b70] text-[11px] mx-1">then</span>
+            <span class="key">Ctrl</span><span class="key-plus">+</span><span class="key">C</span><span class="key-plus">×2</span>
+          </div>
+          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">→</span> copy slot 2</span>
         </div>
         <div class="flex items-center justify-between py-3 border-b border-[#313244]">
           <div class="flex gap-1 items-center">
-            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">V</span>
+            <span class="key">Ctrl</span><span class="key-plus">+</span><span class="key">R</span>
           </div>
-          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">←</span> default slot</span>
+          <span class="text-[13px] text-[#a6adc8]">open search (TUI)</span>
         </div>
         <div class="flex items-center justify-between py-3 border-b border-[#313244]">
           <div class="flex gap-1 items-center">
-            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">⌥</span><span class="key-plus">+</span><span class="key key-accent">1</span>
+            <span class="key">Ctrl</span><span class="key-plus">+</span><span class="key">G</span>
           </div>
-          <span class="text-[13px] text-[#a6adc8]"><span class="text-[#6c7086]">←</span> slot 1</span>
+          <span class="text-[13px] text-[#a6adc8]">open GUI window</span>
         </div>
         <div class="flex items-center justify-between py-3 border-b border-[#313244]">
           <div class="flex gap-1 items-center">
-            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">⇧</span><span class="key-plus">+</span><span class="key">V</span>
+            <span class="key">Ctrl</span><span class="key-plus">+</span><span class="key">⇧</span><span class="key-plus">+</span><span class="key">V</span>
           </div>
-          <span class="text-[13px] text-[#a6adc8]">history picker</span>
+          <span class="text-[13px] text-[#a6adc8]">smart paste</span>
         </div>
         <div class="flex items-center justify-between py-3">
-          <div class="flex gap-1 items-center">
-            <span class="key">⌘</span><span class="key-plus">+</span><span class="key">⌥</span><span class="key-plus">+</span><span class="key">S</span>
-          </div>
-          <span class="text-[13px] text-[#a6adc8]">slot overlay</span>
+          <span class="text-[13px] text-[#a6adc8]">Menu bar → toggle <span class="text-[#fab387]">HUD slot overlay</span></span>
         </div>
       </div>
     </div>
@@ -98,11 +122,6 @@
   }
   .key:hover {
     transform: translateY(-1px);
-  }
-  .key-accent {
-    border-color: rgba(250, 179, 135, 0.3);
-    color: #fab387;
-    background: rgba(250, 179, 135, 0.08);
   }
   .key-plus {
     color: #6c7086;

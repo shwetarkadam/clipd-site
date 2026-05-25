@@ -1,21 +1,70 @@
 ---
 import '../styles/global.css';
+import {
+  CLIPD_GITHUB_URL,
+  CLIPD_VERSION,
+  SITE_URL,
+} from '../lib/site';
 
 interface Props {
   title: string;
+  description?: string;
 }
-const { title } = Astro.props;
+const {
+  title,
+  description = `clipd — Rust clipboard daemon for macOS: 30 slots, searchable history, HUD overlay, native GUI, and clipd search (TUI). Cross-platform sync and on-device AI are on the roadmap.`,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+const ogImageURL = new URL('/og-image.svg', SITE_URL).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'clipd',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'macOS 11.0+ (Apple Silicon)',
+  softwareVersion: CLIPD_VERSION.replace(/^v/, ''),
+  description,
+  url: SITE_URL,
+  downloadUrl: CLIPD_GITHUB_URL,
+  license: 'https://github.com/shwetarkadam/clipd/blob/main/LICENSE',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+};
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="clipd — A Rust-native AI clipboard daemon for developers. Multi-slot hotkeys, searchable history, editor plugins, and local AI." />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:site_name" content="clipd" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <meta name="application-name" content="clipd" />
+    <meta name="theme-color" content="#11111b" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script defer src="https://cloud.umami.is/script.js" data-website-id="b7e90ea5-0cd1-4142-8a74-9c0dd07a43bd"></script>
   </head>
   <body>
