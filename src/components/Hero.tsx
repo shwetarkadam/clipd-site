@@ -3,36 +3,100 @@ import { ShootingStars } from "./ui/shooting-stars";
 import { StarsBackground } from "./ui/stars-background";
 import { TextGenerateEffect } from "./ui/text-generate-effect";
 import { FlipWords } from "./ui/flip-words";
-import { Button as MovingBorderButton } from "./ui/moving-border";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CLIPD_GITHUB_URL,
-  CLIPD_INSTALL_CMD,
+  CLIPD_INSTALL_SECTION_HASH,
   CLIPD_RELEASES_URL,
   CLIPD_REQUIREMENTS_MACOS,
   CLIPD_VERSION,
 } from "../lib/site";
+import { MACOS_INSTALL_GUIDE, WINDOWS_QUICK_GUIDE } from "../lib/install-guides";
+import ClipdGuiMock from "./ClipdGuiMock";
+import InstallSteps from "./InstallSteps";
 
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigator.clipboard?.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+type HeroPlatform = "macos" | "windows" | "linux";
+
+function detectHeroPlatform(): HeroPlatform {
+  if (typeof navigator === "undefined") return "macos";
+  const ua = navigator.userAgent;
+  if (/Windows/i.test(ua)) return "windows";
+  if (/Linux/i.test(ua) && !/Android/i.test(ua)) return "linux";
+  if (/Mac/i.test(ua)) return "macos";
+  return "macos";
+}
+
+function HeroInstallRow() {
+  const [platform, setPlatform] = useState<HeroPlatform>("macos");
+
+  useEffect(() => {
+    setPlatform(detectHeroPlatform());
+  }, []);
+
+  const guide = platform === "macos" ? MACOS_INSTALL_GUIDE : WINDOWS_QUICK_GUIDE;
+
   return (
-    <button
-      onClick={handleCopy}
-      className={`ml-auto px-2.5 py-1 text-[11px] font-mono rounded border transition-all cursor-pointer ${
-        copied
-          ? "text-[#a6e3a1] border-[#a6e3a1] bg-[#a6e3a1]/10"
-          : "text-[#6c7086] border-[#45475a] bg-[#313244] hover:text-[#cdd6f4] hover:bg-[#45475a]"
-      }`}
-    >
-      {copied ? "copied!" : "copy"}
-    </button>
+    <div className="w-full max-w-full">
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        {(["macos", "windows", "linux"] as const).map((p) => (
+          <button
+            key={p}
+            type="button"
+            onClick={() => setPlatform(p)}
+            className={`px-3 py-1.5 font-mono text-[11px] border rounded-md transition-colors ${
+              platform === p
+                ? "border-[#89b4fa] bg-[#89b4fa]/10 text-[#cdd6f4]"
+                : "border-[#45475a] text-[#6c7086] hover:text-[#bac2de] hover:border-[#585b70]"
+            }`}
+          >
+            {p === "macos" ? "macOS" : p === "windows" ? "Windows" : "Linux"}
+          </button>
+        ))}
+      </div>
+
+      {platform === "linux" ? (
+        <a
+          href={CLIPD_INSTALL_SECTION_HASH}
+          className="inline-flex items-center gap-2 px-5 py-3.5 border border-[#89b4fa]/50 rounded-md bg-[#181825] text-[#cdd6f4] font-mono text-[13px] hover:border-[#89b4fa] hover:bg-[#89b4fa]/5 transition-all no-underline"
+        >
+          <span className="text-[#a6e3a1]">↓</span>
+          Download the latest for Linux
+        </a>
+      ) : (
+        <InstallSteps guide={guide} />
+      )}
+
+      <p className="mt-3 font-mono text-[11px] text-[#585b70] leading-[1.6]">
+        {platform === "macos" && (
+          <>
+            Full install options and Intel Mac notes →{" "}
+            <a href={CLIPD_INSTALL_SECTION_HASH} className="text-[#89b4fa] hover:underline">
+              install section
+            </a>
+            .
+          </>
+        )}
+        {platform === "windows" && (
+          <>
+            Full install (AppData + PATH) →{" "}
+            <a href={`${CLIPD_INSTALL_SECTION_HASH}?platform=windows`} className="text-[#89b4fa] hover:underline">
+              install section
+            </a>
+            .
+          </>
+        )}
+        {platform === "linux" && (
+          <>
+            Linux builds and scripts are in the{" "}
+            <a href={CLIPD_INSTALL_SECTION_HASH} className="text-[#89b4fa] hover:underline">
+              install section
+            </a>{" "}
+            below.
+          </>
+        )}
+      </p>
+    </div>
   );
 }
 
@@ -98,111 +162,6 @@ function ClipCat({ size = 32, className = "" }: { size?: number; className?: str
 
 export { ClipCat };
 
-// Ratatui-style TUI clipboard manager
-function HeroTUI() {
-  const clipItems = [
-    { icon: "►", iconCls: "text-[#89b4fa]", text: "House robber  1-D Dynamic Prog...", time: "11m ago", active: true },
-    { icon: "📄", iconCls: "text-[#6c7086]", text: "Here's how to create your corpo...", time: "11m ago" },
-    { icon: "📄", iconCls: "text-[#6c7086]", text: "tail -f ~/Library/Logs/clipd-d...", time: "13m ago" },
-    { icon: "📄", iconCls: "text-[#6c7086]", text: "We are hiring for three positi...", time: "14m ago" },
-    { icon: "📄", iconCls: "text-[#6c7086]", text: "Find Minimum in rotated sorted...", time: "17m ago" },
-    { icon: "📄", iconCls: "text-[#6c7086]", text: "Search in rotated sorted array...", time: "24m ago" },
-    { icon: "🔗", iconCls: "text-[#6c7086]", text: "https://github.com/shwetarkad...", time: "4h ago" },
-    { icon: "📄", iconCls: "text-[#6c7086]", text: "What makes you one of the top...", time: "4h ago" },
-    { icon: "🔗", iconCls: "text-[#6c7086]", text: "https://shwetakadam.github.io...", time: "4h ago" },
-  ];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: 1.0, duration: 0.8, ease: "easeOut" }}
-      className="w-full"
-    >
-      <div
-        className="bg-[#11111b] border border-[#cba6f7] rounded-sm overflow-hidden font-mono"
-        style={{ boxShadow: "0 0 0 1px #313244, 0 32px 100px rgba(0,0,0,0.6), 0 0 60px rgba(203,166,247,0.06)" }}
-      >
-        {/* Search bar */}
-        <div className="border-b border-[#313244] px-3 py-1.5 flex items-center gap-2">
-          <span className="text-[#fab387] text-[11px]">🔍</span>
-          <span className="text-[#6c7086] text-[11px]">Search clips</span>
-          <motion.span
-            className="inline-block w-[1px] h-3.5 bg-[#cdd6f4]"
-            animate={{ opacity: [1, 0] }}
-            transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
-          />
-        </div>
-
-        {/* Main area — two panes */}
-        <div className="flex text-[10px] leading-[1.7]">
-          {/* Left pane — clip list */}
-          <div className="flex-1 border-r border-[#313244]">
-            <div className="px-2 py-1 text-[9px] text-[#6c7086] border-b border-[#313244] flex items-center gap-1">
-              <span>📋</span> Clips (157)
-            </div>
-            {clipItems.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.2 + i * 0.08, duration: 0.25 }}
-                className={`px-2 py-[2px] flex items-center gap-1.5 whitespace-nowrap overflow-hidden ${
-                  item.active
-                    ? "bg-[#313244] text-[#cdd6f4]"
-                    : "text-[#a6adc8]"
-                }`}
-              >
-                <span className={`text-[9px] ${item.iconCls} shrink-0`}>{item.icon}</span>
-                <span className="truncate">{item.text}</span>
-                <span className="ml-auto text-[#89b4fa] shrink-0 text-[9px]">{item.time}</span>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Right pane — preview */}
-          <div className="w-[45%] hidden sm:block">
-            <div className="px-2 py-1 text-[9px] text-[#6c7086] border-b border-[#313244] flex items-center gap-1">
-              <span>📄</span> text | sublime_text | id:152
-            </div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.6, duration: 0.4 }}
-              className="px-3 py-2 text-[#a6adc8]"
-            >
-              <div className="text-[#cdd6f4]">House robber</div>
-              <div className="text-[#6c7086] text-[9px] mt-1">1-D Dynamic Programming</div>
-              <div className="text-[#585b70] text-[9px] mt-2">2/10/2025 &nbsp; slot 1</div>
-              <div className="mt-3 border-t border-[#313244] pt-2">
-                <div className="text-[#6c7086] text-[9px] mb-1">Preview:</div>
-                <div className="text-[9px] text-[#a6adc8] leading-[1.6]">
-                  <span className="text-[#cba6f7]">def</span> <span className="text-[#a6e3a1]">rob</span>(nums):
-                  <br />
-                  &nbsp;&nbsp;<span className="text-[#cba6f7]">if not</span> nums: <span className="text-[#cba6f7]">return</span> <span className="text-[#fab387]">0</span>
-                  <br />
-                  &nbsp;&nbsp;dp = [<span className="text-[#fab387]">0</span>] * len(nums)
-                  <br />
-                  &nbsp;&nbsp;dp[<span className="text-[#fab387]">0</span>] = nums[<span className="text-[#fab387]">0</span>]
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Bottom bar — keybindings */}
-        <div className="border-t border-[#313244] px-3 py-1.5 flex items-center gap-3 text-[9px] text-[#585b70]">
-          <span><span className="text-[#6c7086]">↑↓</span> Navigate</span>
-          <span><span className="text-[#6c7086]">Enter</span> Copy</span>
-          <span><span className="text-[#6c7086]">Ctrl+D</span> Delete</span>
-          <span><span className="text-[#6c7086]">Ctrl+U</span> Clear</span>
-          <span><span className="text-[#6c7086]">Esc</span> Quit</span>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 export default function Hero() {
   const flipWords = ["Atuin", "tmux", "fzf"];
 
@@ -234,7 +193,7 @@ export default function Hero() {
 
       {/* Content — two-column layout */}
       <div className="relative z-10 max-w-[1300px] mx-auto px-8 pt-40 pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] items-center gap-16 lg:gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_520px] items-center gap-16 lg:gap-20">
           {/* Left column — text + CTA */}
           <div>
             <motion.div
@@ -292,31 +251,27 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.5, duration: 0.6 }}
-              className="flex gap-4 items-center flex-wrap"
+              className="flex gap-4 items-start flex-wrap"
             >
-              <MovingBorderButton
-                borderRadius="6px"
-                className="bg-[#181825] text-[#cdd6f4] border-[#313244] font-mono text-xs sm:text-sm px-4 sm:px-6 py-3.5 max-w-full"
-                containerClassName="h-auto max-w-full"
-                duration={3000}
-              >
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-left">
-                  <span className="text-[#a6e3a1] shrink-0">$</span>
-                  <span className="text-[#89b4fa] break-all">
-                    curl -fsSL raw.githubusercontent.com/.../install.sh | bash
-                  </span>
-                  <CopyButton text={CLIPD_INSTALL_CMD} />
-                </div>
-              </MovingBorderButton>
+              <HeroInstallRow />
 
-              <GitHubStarButton />
+              <div className="flex gap-4 items-center flex-wrap">
+                <GitHubStarButton />
 
-              <a
-                href="#architecture"
-                className="inline-flex items-center gap-2 px-5 py-3 text-[#6c7086] font-mono text-[13px] hover:text-[#cdd6f4] transition-colors no-underline"
-              >
-                <span className="text-[#cba6f7]">{">"}</span> how it works
-              </a>
+                <a
+                  href="#architecture"
+                  className="inline-flex items-center gap-2 px-5 py-3 text-[#6c7086] font-mono text-[13px] hover:text-[#cdd6f4] transition-colors no-underline"
+                >
+                  <span className="text-[#cba6f7]">{">"}</span> how it works
+                </a>
+
+                <a
+                  href={CLIPD_INSTALL_SECTION_HASH}
+                  className="inline-flex items-center gap-2 px-5 py-3 text-[#6c7086] font-mono text-[13px] hover:text-[#cdd6f4] transition-colors no-underline"
+                >
+                  <span className="text-[#cba6f7]">{">"}</span> all downloads
+                </a>
+              </div>
             </motion.div>
 
             <motion.div
@@ -365,11 +320,15 @@ export default function Hero() {
                 </div>
               </div>
             </motion.div>
+
+            <div className="mt-12 lg:hidden">
+              <ClipdGuiMock />
+            </div>
           </div>
 
-          {/* Right column — shipped TUI search (clipd search) */}
+          {/* Right column — actual clipd GUI */}
           <div className="hidden lg:block">
-            <HeroTUI />
+            <ClipdGuiMock />
           </div>
         </div>
       </div>

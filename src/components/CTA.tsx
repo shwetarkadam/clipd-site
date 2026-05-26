@@ -1,26 +1,35 @@
 import { motion } from "motion/react";
 import { LampContainer } from "./ui/lamp";
 import { Button as MovingBorderButton } from "./ui/moving-border";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CLIPD_CROSSPLATFORM_BRANCH_URL,
   CLIPD_GITHUB_URL,
-  CLIPD_INSTALL_CMD,
   CLIPD_LINUX_APT_DEPS_CMD,
   CLIPD_LINUX_INSTALL_CMD,
   CLIPD_LINUX_INSTALL_DIR,
+  CLIPD_MACOS_DMG_ARM64_URL,
   CLIPD_README_URL,
   CLIPD_RELEASES_URL,
   CLIPD_REQUIREMENTS_LINUX,
   CLIPD_REQUIREMENTS_MACOS,
   CLIPD_REQUIREMENTS_WINDOWS,
-  CLIPD_WINDOWS_INSTALL_CMD,
-  CLIPD_WINDOWS_INSTALL_CMD_CURL,
   CLIPD_WINDOWS_INSTALL_DIR,
-  CLIPD_WINDOWS_ZIP_INSTALL_CMD,
+  CLIPD_WINDOWS_ZIP_FOLDER,
+  CLIPD_WINDOWS_ZIP_URL,
 } from "../lib/site";
+import { MACOS_INSTALL_GUIDE, WINDOWS_FULL_INSTALL_GUIDE, WINDOWS_QUICK_GUIDE } from "../lib/install-guides";
+import InstallSteps from "./InstallSteps";
 
 type Platform = "macos" | "linux" | "windows";
+
+function platformFromLocation(): Platform | null {
+  if (typeof window === "undefined") return null;
+  const params = new URLSearchParams(window.location.search);
+  const p = params.get("platform");
+  if (p === "macos" || p === "linux" || p === "windows") return p;
+  return null;
+}
 
 function CopyBtn({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -85,15 +94,17 @@ function ReleaseDownloadCallout() {
       <ul className="text-[12px] text-[#a6adc8] leading-[1.7] list-disc list-inside space-y-1.5 font-mono">
         <li>
           <span className="text-[#fab387]">macOS</span> —{" "}
-          <code className="text-[#89b4fa]">Clipd-*.dmg</code> or{" "}
-          <code className="text-[#89b4fa]">Clipd-macos-*-v*.zip</code> → open the DMG or unzip, drag{" "}
-          <strong className="text-[#cdd6f4] font-normal">Clipd.app</strong> to Applications
+          <a href={CLIPD_MACOS_DMG_ARM64_URL} className="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">
+            <code className="text-[#89b4fa]">Clipd-0.1.1-arm64.dmg</code>
+          </a>{" "}
+          → open, drag <strong className="text-[#cdd6f4] font-normal">Clipd.app</strong> to Applications
         </li>
         <li>
           <span className="text-[#fab387]">Windows</span> —{" "}
-          <code className="text-[#89b4fa]">Clipd-windows-x86_64-*.zip</code> → unzip, run{" "}
-          <code className="text-[#89b4fa]">install.ps1</code>, or double-click{" "}
-          <code className="text-[#89b4fa]">clipd-ui.exe</code>
+          <a href={CLIPD_WINDOWS_ZIP_URL} className="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">
+            <code className="text-[#89b4fa]">Clipd-windows-x86_64-v0.1.1.zip</code>
+          </a>{" "}
+          → unzip, run <code className="text-[#89b4fa]">clipd-ui.exe</code>
         </li>
         <li>
           <span className="text-[#fab387]">Linux</span> —{" "}
@@ -110,6 +121,11 @@ export default function CTA() {
   const [platform, setPlatform] = useState<Platform>("macos");
   const waitlistAction = import.meta.env.PUBLIC_SYNC_WAITLIST_FORM_ACTION as string | undefined;
   const waitlistEnabled = Boolean(waitlistAction && /^https?:\/\//i.test(waitlistAction));
+
+  useEffect(() => {
+    const fromUrl = platformFromLocation();
+    if (fromUrl) setPlatform(fromUrl);
+  }, []);
 
   return (
     <section id="install" className="relative bg-[#181825]">
@@ -177,36 +193,19 @@ export default function CTA() {
               </div>
 
               <div className="max-w-[min(100%,560px)] mx-auto space-y-3 px-2">
-                <MovingBorderButton
-                  borderRadius="6px"
-                  className="bg-[#181825] text-[#cdd6f4] border-[#313244] font-mono text-[11px] sm:text-xs w-full"
-                  containerClassName="w-full h-auto"
-                  duration={3000}
-                >
-                  <div className="flex flex-wrap items-center gap-2 px-4 sm:px-5 py-3 w-full text-left">
-                    <span className="text-[#a6e3a1] shrink-0">$</span>
-                    <span className="text-[#89b4fa] break-all">{CLIPD_INSTALL_CMD}</span>
-                    <CopyBtn text={CLIPD_INSTALL_CMD} />
-                  </div>
-                </MovingBorderButton>
+                <InstallSteps guide={MACOS_INSTALL_GUIDE} />
 
                 <p className="text-[11px] text-[#585b70] font-mono text-left px-1 leading-[1.6]">
-                  Option 2 — Download the latest{" "}
-                  <a href={CLIPD_RELEASES_URL} className="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">
-                    .dmg or .zip
+                  Or download{" "}
+                  <a href={CLIPD_MACOS_DMG_ARM64_URL} className="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">
+                    Clipd-0.1.1-arm64.dmg
                   </a>{" "}
-                  from GitHub Releases:
+                  directly from{" "}
+                  <a href={CLIPD_RELEASES_URL} className="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">
+                    GitHub Releases
+                  </a>
+                  .
                 </p>
-                <ul className="text-[11px] text-[#585b70] font-mono text-left px-1 leading-[1.7] list-disc list-inside space-y-1">
-                  <li>
-                    <code className="text-[#fab387]">Clipd-*.dmg</code> — open, drag <strong className="text-[#cdd6f4] font-normal">Clipd.app</strong> to Applications
-                  </li>
-                  <li>
-                    <code className="text-[#fab387]">Clipd-macos-arm64-v*.zip</code> or{" "}
-                    <code className="text-[#fab387]">Clipd-macos-x86_64-v*.zip</code> — unzip, drag{" "}
-                    <strong className="text-[#cdd6f4] font-normal">Clipd.app</strong> to Applications
-                  </li>
-                </ul>
               </div>
             </>
           )}
@@ -319,10 +318,12 @@ export default function CTA() {
                   What the installer does
                 </div>
                 <ul className="text-[13px] text-[#a6adc8] leading-[1.7] list-disc list-inside space-y-1.5 mb-4">
-                  <li>Downloads the latest <code className="text-[#fab387]">Clipd-windows-x86_64-*.zip</code> from Releases</li>
+                  <li>
+                    Downloads <code className="text-[#fab387]">Clipd-windows-x86_64-v0.1.1.zip</code> from GitHub
+                    Releases
+                  </li>
                   <li>Installs binaries to <code className="text-[#fab387]">{CLIPD_WINDOWS_INSTALL_DIR}</code></li>
                   <li>Adds Clipd to your user PATH</li>
-                  <li>Creates Start Menu + Desktop shortcuts and auto-start on login</li>
                   <li>Launches the tray app immediately</li>
                 </ul>
                 <div className="font-mono text-[11px] text-[#cba6f7] uppercase tracking-[1.5px] mb-2">
@@ -341,7 +342,9 @@ export default function CTA() {
                   </li>
                 </ol>
                 <p className="text-[11px] text-[#585b70] font-mono">
-                  Matches the cross-platform branch on{" "}
+                  Start Menu shortcuts and auto-start are included when you run{" "}
+                  <code className="text-[#fab387]">install.ps1</code> from the zip — once release asset names match the
+                  installer script on{" "}
                   <a href={CLIPD_CROSSPLATFORM_BRANCH_URL} className="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">
                     dev/crossplatform-changes
                   </a>
@@ -349,64 +352,23 @@ export default function CTA() {
                 </p>
               </div>
 
-              <div className="max-w-[min(100%,560px)] mx-auto space-y-3 px-2">
+              <div className="max-w-[min(100%,560px)] mx-auto space-y-4 px-2">
                 <p className="text-[11px] text-[#585b70] font-mono text-left px-1">
-                  Option 1 — PowerShell one-liner (recommended)
+                  Option 1 — Full install (recommended)
                 </p>
-
-                <MovingBorderButton
-                  borderRadius="6px"
-                  className="bg-[#181825] text-[#cdd6f4] border-[#313244] font-mono text-[11px] sm:text-xs w-full"
-                  containerClassName="w-full h-auto"
-                  duration={3000}
-                >
-                  <div className="flex flex-wrap items-center gap-2 px-4 sm:px-5 py-3 w-full text-left">
-                    <span className="text-[#a6e3a1] shrink-0">PS&gt;</span>
-                    <span className="text-[#89b4fa] break-all">{CLIPD_WINDOWS_INSTALL_CMD}</span>
-                    <CopyBtn text={CLIPD_WINDOWS_INSTALL_CMD} />
-                  </div>
-                </MovingBorderButton>
-
-                <p className="text-[11px] text-[#585b70] font-mono text-left px-1 leading-[1.6]">
-                  If <code className="text-[#fab387]">irm</code> is blocked, use{" "}
-                  <code className="text-[#fab387]">curl.exe</code> (not plain <code className="text-[#fab387]">curl</code>{" "}
-                  — that alias breaks in PowerShell):
-                </p>
-
-                <div className="border border-[#313244] rounded-md bg-[#11111b]/80 px-4 py-3 text-left">
-                  <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] sm:text-xs">
-                    <span className="text-[#a6e3a1] shrink-0">PS&gt;</span>
-                    <span className="text-[#89b4fa] break-all">{CLIPD_WINDOWS_INSTALL_CMD_CURL}</span>
-                    <CopyBtn text={CLIPD_WINDOWS_INSTALL_CMD_CURL} />
-                  </div>
-                </div>
+                <InstallSteps guide={WINDOWS_FULL_INSTALL_GUIDE} />
 
                 <p className="text-[11px] text-[#585b70] font-mono text-left px-1 pt-2">
-                  Option 2 — Download the latest{" "}
-                  <a href={CLIPD_RELEASES_URL} className="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">
-                    Clipd-windows-x86_64-*.zip
-                  </a>{" "}
-                  from GitHub Releases (no PowerShell required to download)
+                  Option 2 — Quick try (download, extract, launch — no PATH changes)
                 </p>
-                <p className="text-[11px] text-[#585b70] font-mono text-left px-1 leading-[1.6]">
-                  1. Unzip the folder
-                  <br />
-                  2. Double-click <code className="text-[#fab387]">clipd-ui.exe</code> to try, or open PowerShell there and run:
-                </p>
+                <InstallSteps guide={WINDOWS_QUICK_GUIDE} />
 
-                <div className="border border-[#313244] rounded-md bg-[#11111b]/80 px-4 py-3 text-left">
-                  <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] sm:text-xs">
-                    <span className="text-[#a6e3a1] shrink-0">PS&gt;</span>
-                    <span className="text-[#89b4fa] break-all">{CLIPD_WINDOWS_ZIP_INSTALL_CMD}</span>
-                    <CopyBtn text={CLIPD_WINDOWS_ZIP_INSTALL_CMD} />
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-[#585b70] font-mono text-left px-1 leading-[1.6]">
-                  To try without installing, run <code className="text-[#fab387]">clipd-ui.exe</code> from the unzipped
-                  folder. CLI: <code className="text-[#fab387]">clipd list</code>,{" "}
-                  <code className="text-[#fab387]">clipd search</code>,{" "}
-                  <code className="text-[#fab387]">clipd slots</code>.
+                <p className="text-[11px] text-[#585b70] font-mono text-left px-1 pt-2">
+                  Option 3 — Manual download:{" "}
+                  <a href={CLIPD_WINDOWS_ZIP_URL} className="text-[#89b4fa] hover:underline" target="_blank" rel="noreferrer">
+                    {CLIPD_WINDOWS_ZIP_FOLDER}.zip
+                  </a>
+                  . Unzip and double-click <code className="text-[#fab387]">clipd-ui.exe</code>.
                 </p>
               </div>
             </>
